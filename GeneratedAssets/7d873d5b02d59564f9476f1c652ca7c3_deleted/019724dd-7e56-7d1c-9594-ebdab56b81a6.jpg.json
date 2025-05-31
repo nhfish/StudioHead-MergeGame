@@ -1,0 +1,18 @@
+{
+    "asset": "7d873d5b02d59564f9476f1c652ca7c3",
+    "fileName": "019724dd-7e56-7d1c-9594-ebdab56b81a6.jpg",
+    "prompt": "a rounded 2d flat fill box",
+    "negativePrompt": "",
+    "model": "4dc55660-f3eb-42ba-93a4-6261d6b2b8ec",
+    "customSeed": -1,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0
+}

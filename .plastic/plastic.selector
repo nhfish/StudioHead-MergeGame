@@ -1,0 +1,4 @@
+repository "StudioHeadMergeGamePrototype_6.2/StudioHeadMergeGamePrototype_6.2@1374698940045@cloud"
+  path "/"
+    br "/main"
+    co "/main"

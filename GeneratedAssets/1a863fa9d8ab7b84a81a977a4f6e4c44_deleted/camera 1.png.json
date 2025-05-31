@@ -1,0 +1,18 @@
+{
+    "asset": "1a863fa9d8ab7b84a81a977a4f6e4c44",
+    "fileName": "camera 1.png",
+    "prompt": "",
+    "negativePrompt": "",
+    "model": "",
+    "customSeed": -1,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0
+}
