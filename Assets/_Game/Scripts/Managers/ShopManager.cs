@@ -13,7 +13,10 @@ public class ShopManager : MonoBehaviour
             return;
         }
 
+        if (!EconomyManager.Instance.Spend(CurrencyType.Money, item.price))
+
         if (!EconomyManager.Instance.Spend(item.price))
+
         {
             Debug.Log("Purchase failed  not enough funds.");
             return;

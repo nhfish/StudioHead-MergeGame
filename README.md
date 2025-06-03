@@ -135,4 +135,12 @@ Game concept: satirical merge sim set in a film studio 🎬
 MIT (or custom license if needed)  
 You’re free to use, remix, or extend this system for prototyping.
 
----
+UPDATES:
+
+## Economy & Shop UI
+
+06.03.2025 via CODEX
+The `EconomyManager` now supports multiple currencies (`Money`, `Gems`, and `Tickets`).
+Attach the new `CurrencyPanel` prefab or script to a UI canvas and assign three
+`TextMeshProUGUI` fields to display these values. The panel listens for economy
+changes and updates automatically.
