@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 using System.Collections.Generic;
 
 public enum CurrencyType { Money, Gems, Tickets }
@@ -16,6 +17,10 @@ public class EconomyManager : MonoBehaviour
 
     public int CurrentMoney => GetAmount(CurrencyType.Money);
 
+    private int currentMoney;
+
+    public int CurrentMoney => currentMoney;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -24,21 +29,33 @@ public class EconomyManager : MonoBehaviour
             return;
         }
         Instance = this;
+        
         currency[CurrencyType.Money] = startingMoney;
         currency[CurrencyType.Gems] = startingGems;
         currency[CurrencyType.Tickets] = startingTickets;
     }
 
     public bool Spend(CurrencyType type, int amount)
+
+        currentMoney = startingMoney;
+    }
+
+    public bool Spend(int amount)
+
     {
         if (amount <= 0)
             return true;
 
+
         if (!currency.ContainsKey(type) || currency[type] < amount)
+
+        if (currentMoney < amount)
+
         {
             Debug.Log("Not enough funds.");
             return false;
         }
+
 
         currency[type] -= amount;
         OnCurrencyChanged(type);
@@ -66,5 +83,13 @@ public class EconomyManager : MonoBehaviour
     private void OnCurrencyChanged(CurrencyType type)
     {
         CurrencyChanged?.Invoke(type, GetAmount(type));
+        currentMoney -= amount;
+        return true;
+    }
+
+    public void Add(int amount)
+    {
+        if (amount > 0)
+            currentMoney += amount;
     }
 }
