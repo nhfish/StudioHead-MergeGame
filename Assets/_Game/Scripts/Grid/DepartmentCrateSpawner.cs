@@ -48,7 +48,18 @@ public class DepartmentCrateSpawner : MonoBehaviour
 
         Vector2Int? emptyCell = gridManager.GetRandomFreeCell();
 
-        if (emptyCell == null)
+        // If the crate's cell was not registered correctly or happens to be
+        // returned, keep requesting a free cell until one is different from our
+        // current position.
+        int attempts = 0;
+        const int maxAttempts = 50;
+        while (emptyCell != null && emptyCell.Value == currentGridPos && attempts < maxAttempts)
+        {
+            emptyCell = gridManager.GetRandomFreeCell();
+            attempts++;
+        }
+
+        if (emptyCell == null || emptyCell.Value == currentGridPos)
         {
             Debug.LogWarning("No free grid cell available.");
             return;
