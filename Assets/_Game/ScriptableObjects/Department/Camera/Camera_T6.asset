@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0266771888cafac4fbf6d3cc02c4f11e, type: 3}
-  m_Name: Camera_T3
+  m_Name: Camera_T6
   m_EditorClassIdentifier: Assembly-CSharp::DepartmentItemData
   department: 0
-  tier: 2
-  itemName: Camera T3
+  tier: 5
+  itemName: Camera T6
   icon: {fileID: 0}
   tileColor: {r: 0.15876636, g: 0.23270428, b: 0.14123246, a: 1}
-  nextTierItem: {fileID: 11400000, guid: fe48949dc1a84d57b74799cf886cc102, type: 2}
+  nextTierItem: {fileID: 11400000, guid: 023bb54cbc06478e975f97cb6a480250, type: 2}
   rewardMultiplier: 1
