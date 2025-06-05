@@ -14,14 +14,24 @@ public class DepartmentCrateSpawner : MonoBehaviour
 
     private GridManager gridManager;
     private int usesRemaining;
+    private Vector2Int currentGridPos;
 
     void Start()
     {
         gridManager = FindFirstObjectByType<GridManager>();
         usesRemaining = crateData.maxUses;
+        currentGridPos = gridManager.GetNearestGridCell(transform.position);
+        transform.position = gridManager.GetWorldPosition(currentGridPos);
+        gridManager.RegisterTile(currentGridPos, null);
 
         UpdateVisuals();
     }
+    void OnDestroy()
+    {
+        if (gridManager != null)
+            gridManager.UnregisterTile(currentGridPos);
+    }
+
 
     void OnMouseDown()
     {
@@ -47,7 +57,7 @@ public class DepartmentCrateSpawner : MonoBehaviour
         DepartmentItemData itemData = GetRandomItem();
         if (itemData == null)
         {
-            Debug.LogError("Item spawn failed — itemData was null.");
+            Debug.LogError("Item spawn failed â€” itemData was null.");
             return;
         }
 
@@ -90,7 +100,7 @@ public class DepartmentCrateSpawner : MonoBehaviour
         MergeTile mergeTile = newTile.GetComponent<MergeTile>();
         mergeTile.data = itemData;
         mergeTile.ApplyVisuals();
-        mergeTile.SetCurrentGridPosition(gridPos); // Add this method if you haven’t
+        mergeTile.SetCurrentGridPosition(gridPos); // Add this method if you havenâ€™t
 
         gridManager.RegisterTile(gridPos, mergeTile);
     }
