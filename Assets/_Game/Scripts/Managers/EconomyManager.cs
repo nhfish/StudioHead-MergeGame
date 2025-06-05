@@ -12,17 +12,16 @@ public class EconomyManager : MonoBehaviour
     public int startingGems = 0;
     public int startingTickets = 0;
 
-    private Dictionary<CurrencyType, int> currency = new();
-
-    public int CurrentMoney => GetAmount(CurrencyType.Money);
+    private readonly Dictionary<CurrencyType, int> currency = new();
 
     void Awake()
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
             return;
         }
+
         Instance = this;
 
         currency[CurrencyType.Money] = startingMoney;
@@ -64,6 +63,7 @@ public class EconomyManager : MonoBehaviour
     }
 
     public System.Action<CurrencyType, int> CurrencyChanged;
+
     private void OnCurrencyChanged(CurrencyType type)
     {
         CurrencyChanged?.Invoke(type, GetAmount(type));
