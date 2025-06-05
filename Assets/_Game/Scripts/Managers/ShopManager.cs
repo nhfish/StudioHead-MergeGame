@@ -22,7 +22,7 @@ public class ShopManager : MonoBehaviour
         switch (item.itemType)
         {
             case ShopItemType.Crate:
-                GiveCrate(item.crate);
+                GiveCrate(item.crate, item.price);
                 break;
             case ShopItemType.DepartmentUpgrade:
                 UpgradeDepartment(item.upgradeDepartment);
@@ -30,7 +30,7 @@ public class ShopManager : MonoBehaviour
         }
     }
 
-    private void GiveCrate(CrateData crate)
+    private void GiveCrate(CrateData crate, int price)
     {
         if (crate == null)
         {
@@ -44,7 +44,24 @@ public class ShopManager : MonoBehaviour
             return;
         }
 
-        var crateObj = Instantiate(cratePrefab, Vector3.zero, Quaternion.identity);
+        GridManager gridManager = FindFirstObjectByType<GridManager>();
+        if (gridManager == null)
+        {
+            Debug.LogError("GridManager not found in scene.");
+            EconomyManager.Instance.Add(CurrencyType.Money, price);
+            return;
+        }
+
+        Vector2Int? freeCell = gridManager.GetRandomFreeCell();
+        if (freeCell == null)
+        {
+            Debug.LogWarning("No free grid cell available. Purchase refunded.");
+            EconomyManager.Instance.Add(CurrencyType.Money, price);
+            return;
+        }
+
+        Vector3 worldPos = gridManager.GetWorldPosition(freeCell.Value);
+        var crateObj = Instantiate(cratePrefab, worldPos, Quaternion.identity, gridManager.tileParent);
         var spawner = crateObj.GetComponent<DepartmentCrateSpawner>();
         if (spawner != null)
         {
