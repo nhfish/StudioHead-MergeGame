@@ -30,21 +30,20 @@ Built with **Unity 6.2 (2023 LTS)** and supports mobile-first platforms (iOS/And
 
 ## 📁 Project Structure
 
-StudioMerge-CoreStarter/
+StudioHead-MergeGame/
 ├── Assets/
-│   ├── _Game/
-│   │   ├── Scripts/
-│   │   ├── Prefabs/
-│   │   ├── Scenes/
-│   │   └── ScriptableObjects/
-│   ├── Docs/                ← 🧠 Design Logs, Diagrams, Goals
-│   └── Sprites/
-├── ProjectSettings/
+│   └── _Game/
+│       ├── Scripts/
+│       ├── Prefabs/
+│       ├── Scenes/
+│       └── ScriptableObjects/
+├── GeneratedAssets/
 ├── Packages/
+├── ProjectSettings/
 ├── README.md                ← 👋 Welcome doc for new contributors
 ├── DESIGNLOG.md             ← 📜 Running design decisions
 ├── .gitignore               ← 🧹 Prevent junk from polluting repo
-└── StudioMerge-CoreStarter.sln
+└── ignore.conf
 
 ---
 
