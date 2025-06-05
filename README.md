@@ -15,6 +15,10 @@ Built with **Unity 6.2 (2023 LTS)** and supports mobile-first platforms (iOS/And
 ✅ Merge rejection handling (snap-back)  
 ✅ Modular, scalable project layout  
 ✅ Touch-friendly and mobile responsive
+✅ Multi-currency economy and shop interface
+✅ Production and distribution pipeline ([ProductionManager](./Assets/_Game/Scripts/Managers/ProductionManager.cs) / [DistributionQueueManager](./Assets/_Game/Scripts/Managers/DistributionQueueManager.cs))
+✅ Improved crate spawner that finds a free cell
+✅ Talent inventory / card system
 
 ---
 
@@ -143,3 +147,7 @@ The `EconomyManager` now supports multiple currencies (`Money`, `Gems`, and `Tic
 Attach the new `CurrencyPanel` prefab or script to a UI canvas and assign three
 `TextMeshProUGUI` fields to display these values. The panel listens for economy
 changes and updates automatically.
+
+## Crate Spawner Fix
+
+Latest merge: fixed bug where crate spawner placed crates on occupied cells. It now searches for a free grid cell before spawning.
