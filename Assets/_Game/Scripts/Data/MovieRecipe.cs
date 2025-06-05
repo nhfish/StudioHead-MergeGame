@@ -11,7 +11,7 @@ public class MovieRecipe
     public List<DepartmentItemData> submittedItems = new();
 
     public int TotalItemTier =>
-        submittedItems.Sum(item => (int)item.tier + 1); // Basic = 1, Pro = 2, Elite = 3
+        submittedItems.Sum(item => (int)item.tier + 1); // Tier1 = 1 ... Tier10 = 10
 
     public bool HasAllRequiredDepartments()
     {

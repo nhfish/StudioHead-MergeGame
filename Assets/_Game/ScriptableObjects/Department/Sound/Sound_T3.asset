@@ -17,5 +17,5 @@ MonoBehaviour:
   itemName: Sound T3
   icon: {fileID: 0}
   tileColor: {r: 0.12222612, g: 0.15062083, b: 0.3773585, a: 1}
-  nextTierItem: {fileID: 0}
+  nextTierItem: {fileID: 11400000, guid: f150add8251b434985be6bbb7c3441b1, type: 2}
   rewardMultiplier: 1

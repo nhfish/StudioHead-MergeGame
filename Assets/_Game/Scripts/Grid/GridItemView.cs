@@ -33,13 +33,11 @@ public class GridItemView : MonoBehaviour
     /// </summary>
     private Color GetTierColor(DepartmentItemTier tier)
     {
-        return tier switch
-        {
-            DepartmentItemTier.Basic => new Color(0.8f, 0.8f, 0.8f), // Gray
-            DepartmentItemTier.Pro => new Color(0.3f, 0.6f, 1f),      // Blue
-            DepartmentItemTier.Elite => new Color(1f, 0.8f, 0.2f),    // Gold
-            _ => Color.white
-        };
+        // Simple gradient from gray (Tier1) to gold (Tier10)
+        var gray = new Color(0.8f, 0.8f, 0.8f);
+        var gold = new Color(1f, 0.8f, 0.2f);
+        float t = Mathf.Clamp01((int)tier / 9f);
+        return Color.Lerp(gray, gold, t);
     }
 
     public DepartmentItemData GetData()
