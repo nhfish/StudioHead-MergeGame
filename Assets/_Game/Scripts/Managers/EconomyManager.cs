@@ -14,8 +14,6 @@ public class EconomyManager : MonoBehaviour
 
     private readonly Dictionary<CurrencyType, int> currency = new();
 
-    public int CurrentMoney => GetAmount(CurrencyType.Money);
-
     void Awake()
     {
         if (Instance != null && Instance != this)
