@@ -15,6 +15,6 @@ MonoBehaviour:
   department: 0
   icon: {fileID: 7482667652216324306, guid: 6af070f380d36c648990f1a53bd4f0dd, type: 3}
   crateColor: {r: 0.84276724, g: 0.5580922, b: 0.32597592, a: 1}
-  maxUses: 5
+  maxUses: 8
   possibleItems:
   - {fileID: 11400000, guid: a51da1aa259ac26419f2d48c6ead3ff3, type: 2}

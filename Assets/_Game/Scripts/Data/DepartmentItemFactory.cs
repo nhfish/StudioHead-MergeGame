@@ -10,7 +10,7 @@ public static class DepartmentItemFactory
 
         // Filter for the desired department & tier
         var matchingItems = allItems
-            .Where(item => item.department == department && item.tier == DepartmentItemTier.Basic)
+            .Where(item => item.department == department && item.tier == DepartmentItemTier.Tier1)
             .ToList();
 
         if (matchingItems.Count == 0)

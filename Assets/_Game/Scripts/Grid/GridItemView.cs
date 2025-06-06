@@ -33,6 +33,7 @@ public class GridItemView : MonoBehaviour
     /// </summary>
     private Color GetTierColor(DepartmentItemTier tier)
     {
+
         // Define gradient endpoints
         Color tier1Color = new Color(0.7f, 0.7f, 0.7f);  // Gray for Tier 1
         Color tier10Color = new Color(1f, 0.84f, 0f);     // Gold for Tier 10
@@ -48,6 +49,13 @@ public class GridItemView : MonoBehaviour
 
         float t = tierValue / 9f;
         return Color.Lerp(tier1Color, tier10Color, t);
+
+        // Simple gradient from gray (Tier1) to gold (Tier10)
+        var gray = new Color(0.8f, 0.8f, 0.8f);
+        var gold = new Color(1f, 0.8f, 0.2f);
+        float t = Mathf.Clamp01((int)tier / 9f);
+        return Color.Lerp(gray, gold, t);
+
     }
 
     public DepartmentItemData GetData()
