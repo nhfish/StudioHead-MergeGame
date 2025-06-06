@@ -16,6 +16,6 @@ MonoBehaviour:
   tier: 7
   itemName: Camera T8
   icon: {fileID: 0}
-  tileColor: {r: 0.15876636, g: 0.23270428, b: 0.14123246, a: 1}
+  tileColor: {r: 0.61331314, g: 0.2867765, b: 0.6289307, a: 1}
   nextTierItem: {fileID: 11400000, guid: 762eb0958e0747d8b245d2f63762b627, type: 2}
   rewardMultiplier: 1
