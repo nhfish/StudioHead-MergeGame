@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -41,6 +42,14 @@ public class ProductionManager : MonoBehaviour
         recipe.moneyReward = Mathf.RoundToInt(recipeData.baseMoneyReward * (1f - recipeData.optionalDepartmentMoneyPenalty * missingOptional));
         recipe.fanReward = Mathf.RoundToInt(recipeData.baseFanReward * (1f - recipeData.optionalDepartmentFanPenalty * missingOptional));
 
+        if (recipeData.grantSynergyBonus && recipe.HasGenreSynergy() && recipeData.synergyBonusConfig != null)
+        {
+            int highestTier = GetHighestTier(recipe);
+            float bonus = recipeData.synergyBonusConfig.GetBonusForTier(highestTier);
+            recipe.moneyReward = Mathf.RoundToInt(recipe.moneyReward * (1f + bonus));
+            recipe.fanReward = Mathf.RoundToInt(recipe.fanReward * (1f + bonus));
+        }
+
         LockResources(recipe);
 
         StartCoroutine(ProductionTimer());
@@ -77,5 +86,34 @@ public class ProductionManager : MonoBehaviour
         recipe.writer?.Use(); recipe.writer?.Unlock();
         recipe.director?.Use(); recipe.director?.Unlock();
         recipe.actor?.Use(); recipe.actor?.Unlock();
+    }
+
+    int GetHighestTier(MovieRecipe recipe)
+    {
+        int highestItemTier = 1;
+        if (recipe.submittedItems != null && recipe.submittedItems.Count > 0)
+            highestItemTier = recipe.submittedItems.Max(i => (int)i.tier + 1);
+
+        int highestTalentTier = 0;
+        if (recipe.writer != null)
+            highestTalentTier = Mathf.Max(highestTalentTier, RarityToTier(recipe.writer.baseData.rarity));
+        if (recipe.director != null)
+            highestTalentTier = Mathf.Max(highestTalentTier, RarityToTier(recipe.director.baseData.rarity));
+        if (recipe.actor != null)
+            highestTalentTier = Mathf.Max(highestTalentTier, RarityToTier(recipe.actor.baseData.rarity));
+
+        return Mathf.Max(highestItemTier, highestTalentTier);
+    }
+
+    int RarityToTier(TalentRarity rarity)
+    {
+        return rarity switch
+        {
+            TalentRarity.AList => 4,
+            TalentRarity.BList => 3,
+            TalentRarity.CList => 2,
+            TalentRarity.DList => 1,
+            _ => 1
+        };
     }
 }
