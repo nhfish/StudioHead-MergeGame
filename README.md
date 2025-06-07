@@ -151,3 +151,6 @@ changes and updates automatically.
 ## Crate Spawner Fix
 
 Latest merge: fixed bug where crate spawner placed crates on occupied cells. It now searches for a free grid cell before spawning.
+
+## Department Crate Shop
+Added `CrateShopPanel` with purchase buttons for each department. Buying a crate spends money and spawns a matching crate if space allows.
