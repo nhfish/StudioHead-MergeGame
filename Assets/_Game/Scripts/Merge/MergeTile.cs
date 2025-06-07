@@ -1,21 +1,21 @@
+using System.Diagnostics;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using static System.Net.Mime.MediaTypeNames;
 
-public class MergeTile : MonoBehaviour
+public class MergeTile : MonoBehaviour, IGridOccupant
 {
     public DepartmentItemData data;
-
     private Vector3 originalPosition;
-    private Vector3 dragOffset;
     private bool isDragging;
-
-    private Vector2Int currentGridPos;
     private GridManager gridManager;
     private SpriteRenderer spriteRenderer;
+    private Vector2Int currentGridPos;
 
-    // Smooth snap animation
-    private Vector3 targetPosition;
-    private bool isSnapping = false;
-    [SerializeField] private float snapSpeed = 10f;
+    [SerializeField] private UnityEngine.UI.Image iconImage;
+    [SerializeField] private TextMeshProUGUI tierLabel;
+    [SerializeField] private UnityEngine.UI.Image background;
 
     void Awake()
     {
@@ -23,7 +23,9 @@ public class MergeTile : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         if (gridManager == null)
-            Debug.LogError(" GridManager not found in scene.");
+        {
+            UnityEngine.Debug.LogError("GridManager not found!");
+        }
     }
 
     void Start()
@@ -35,66 +37,52 @@ public class MergeTile : MonoBehaviour
         gridManager.RegisterTile(currentGridPos, this);
     }
 
-    void OnMouseDown()
-{
-    originalPosition = transform.position;
-    isDragging = true;
-    isSnapping = false;
-
-    Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-    mouseWorld.z = transform.position.z;
-
-    dragOffset = transform.position - mouseWorld;
-}
-
-   void OnMouseUp()
-{
-    isDragging = false;
-
-    Vector3 worldPos = transform.position;
-    Vector2Int targetGridPos = gridManager.GetNearestGridCell(worldPos);
-
-    // Clamp to valid grid bounds
-    targetGridPos.x = Mathf.Clamp(targetGridPos.x, 0, gridManager.columns - 1);
-    targetGridPos.y = Mathf.Clamp(targetGridPos.y, 0, gridManager.rows - 1);
-
-    Vector3 snapPos = gridManager.GetWorldPosition(targetGridPos);
-
-    // Force snap back if drag was too small (tiny twitch move)
-    if (Vector3.Distance(transform.position, originalPosition) < 0.2f)
+    void OnDestroy()
     {
-        SnapTo(gridManager.GetWorldPosition(currentGridPos));
-        return;
+        if (gridManager != null)
+            gridManager.UnregisterTile(currentGridPos);
     }
 
-    MergeTile occupyingTile = gridManager.GetTileAt(targetGridPos);
-
-    if (occupyingTile != null && occupyingTile != this)
+    void OnMouseDown()
     {
-        bool merged = TryMergeWith(occupyingTile);
-        if (!merged)
+        originalPosition = transform.position;
+        isDragging = true;
+    }
+
+    void OnMouseUp()
+    {
+        isDragging = false;
+
+        Vector3 worldPos = transform.position;
+        Vector2Int targetGridPos = gridManager.GetNearestGridCell(worldPos);
+        Vector3 snapPos = gridManager.GetWorldPosition(targetGridPos);
+
+        MergeTile occupyingTile = gridManager.GetTileAt(targetGridPos) as MergeTile;
+
+        // 1. Try merging
+        if (occupyingTile != null && occupyingTile != this)
         {
-            // Merge failed — snap back to where it came from
-            SnapTo(gridManager.GetWorldPosition(currentGridPos));
+            bool merged = TryMergeWith(occupyingTile);
+            if (!merged)
+            {
+                // Invalid merge - revert to previous position
+                SnapToCurrentGridCell();
+            }
+
+            return;
         }
 
-        return;
-    }
-
-    if (occupyingTile == null)
-    {
-        // Only unregister if actually moving to a new cell
-        if (targetGridPos != currentGridPos)
+        // 2. No tile there valid move update position
+        if (occupyingTile == null)
+        {
             gridManager.UnregisterTile(currentGridPos);
 
-        currentGridPos = targetGridPos;
-        gridManager.RegisterTile(currentGridPos, this);
+            transform.position = snapPos;
+            currentGridPos = targetGridPos;
 
-        // Always snap to aligned position
-        SnapTo(snapPos);
+            gridManager.RegisterTile(currentGridPos, this);
+        }
     }
-}
-
 
     void Update()
     {
@@ -105,36 +93,26 @@ public class MergeTile : MonoBehaviour
             {
                 Vector3 touchPosition = Input.GetTouch(0).position;
                 touchPosition.z = Camera.main.WorldToScreenPoint(transform.position).z;
-                transform.position = Camera.main.ScreenToWorldPoint(touchPosition) + dragOffset;
+                transform.position = Camera.main.ScreenToWorldPoint(touchPosition);
             }
 #else
             Vector3 mousePosition = Input.mousePosition;
             mousePosition.z = Camera.main.WorldToScreenPoint(transform.position).z;
-
-            mousePosition.x = Mathf.Clamp(mousePosition.x, 0, Screen.width);
-            mousePosition.y = Mathf.Clamp(mousePosition.y, 0, Screen.height);
-
-            transform.position = Camera.main.ScreenToWorldPoint(mousePosition) + dragOffset;
+            transform.position = Camera.main.ScreenToWorldPoint(mousePosition);
 #endif
-        }
-
-        // Smooth movement to snapped position
-        if (isSnapping)
-        {
-            transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * snapSpeed);
-
-            if (Vector3.Distance(transform.position, targetPosition) < 0.01f)
-            {
-                transform.position = targetPosition;
-                isSnapping = false;
-            }
         }
     }
 
-    private void SnapTo(Vector3 position)
+    private Vector2Int GetNearestGridCell(Vector3 worldPos)
     {
-        targetPosition = position;
-        isSnapping = true;
+        Vector2 localPos = worldPos - (Vector3)gridManager.tileParent.position;
+        int x = Mathf.RoundToInt((localPos.x - gridManager.startPos.x) / gridManager.tileSpacing);
+        int y = Mathf.RoundToInt((localPos.y - gridManager.startPos.y) / gridManager.tileSpacing);
+
+        return new Vector2Int(
+            Mathf.Clamp(x, 0, gridManager.columns - 1),
+            Mathf.Clamp(y, 0, gridManager.rows - 1)
+        );
     }
 
     private bool TryMergeWith(MergeTile other)
@@ -143,12 +121,13 @@ public class MergeTile : MonoBehaviour
 
         if (!data.IsMergeableWith(other.data))
         {
-            Debug.Log(" Merge failed — incompatible tiles");
+            UnityEngine.Debug.Log("Merge failed — not compatible");
             return false;
         }
 
         Vector3 spawnPos = transform.position;
 
+        // Create new tile
         GameObject newTile = Instantiate(gameObject, spawnPos, Quaternion.identity, transform.parent);
         MergeTile newMergeTile = newTile.GetComponent<MergeTile>();
         newMergeTile.data = data.nextTierItem;
@@ -158,6 +137,7 @@ public class MergeTile : MonoBehaviour
         newMergeTile.currentGridPos = newGridPos;
         gridManager.RegisterTile(newGridPos, newMergeTile);
 
+        // Cleanup
         gridManager.UnregisterTile(currentGridPos);
         gridManager.UnregisterTile(other.currentGridPos);
 
@@ -169,18 +149,45 @@ public class MergeTile : MonoBehaviour
 
     public void ApplyVisuals()
     {
-        if (data != null)
-        {
-            if (data.icon != null)
-                spriteRenderer.sprite = data.icon;
+        if (iconImage != null && data != null)
+            iconImage.sprite = DepartmentItemLibraryInstance.GetIcon(data.department);
 
-            spriteRenderer.color = data.tileColor;
-        }
+        if (tierLabel != null && data != null)
+            tierLabel.text = data.tier.ToString();
+
+        if (background != null && data != null)
+            background.color = GetTierColor(data.tier);
     }
 
-    public void SetCurrentGridPosition(Vector2Int pos)
-{
-    currentGridPos = pos;
-}
+    private Color GetTierColor(DepartmentItemTier tier)
+    {
+        Color[] tierColors = new Color[]
+        {
+            new Color(0.7f, 0.7f, 0.7f),  // Gray
+            Color.white,                  // White
+            Color.yellow,                 // Yellow
+            Color.green,                  // Green
+            new Color(0f, 0f, 0.5f),      // Dark Blue
+            new Color(0.5f, 0f, 0.5f),    // Purple
+            new Color(1f, 0.5f, 0f),      // Orange
+            Color.red,                    // Red
+            new Color(0.5f, 0.8f, 1f),    // Light Blue
+            new Color(1f, 0.84f, 0f)      // Gold
+        };
 
+        int tierIndex = Mathf.Clamp((int)tier, 0, tierColors.Length - 1);
+        return tierColors[tierIndex];
+    }
+
+    private void SnapToCurrentGridCell()
+    {
+        Vector3 snapPos = gridManager.GetWorldPosition(currentGridPos);
+        transform.position = snapPos;
+    }
+
+    // For crates allows them to tell the grid what position they occupy
+    public void SetCurrentGridPosition(Vector2Int newPos)
+    {
+        currentGridPos = newPos;
+    }
 }

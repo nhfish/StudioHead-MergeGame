@@ -1,15 +1,22 @@
+using System;
+using System.Diagnostics;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
+using static System.Net.Mime.MediaTypeNames;
 
-public class DepartmentCrateSpawner : MonoBehaviour
+/// Department Crate that spawns Department Items onto the grid
+public class DepartmentCrateSpawner : MonoBehaviour, IGridOccupant
 {
+    [Header("Prefabs")]
+    public GameObject mergeTilePrefab;
+
     [Header("Crate Data")]
     public CrateData crateData;
 
     [Header("Visuals")]
-    public Image iconImage;
-    public Image backgroundImage;
+    public UnityEngine.UI.Image iconImage;
+    public UnityEngine.UI.Image backgroundImage;
     public TextMeshProUGUI useLabel;
 
     private GridManager gridManager;
@@ -20,18 +27,20 @@ public class DepartmentCrateSpawner : MonoBehaviour
     {
         gridManager = FindFirstObjectByType<GridManager>();
         usesRemaining = crateData.maxUses;
+
+        // Snap to grid and register as occupant
         currentGridPos = gridManager.GetNearestGridCell(transform.position);
         transform.position = gridManager.GetWorldPosition(currentGridPos);
-        gridManager.RegisterTile(currentGridPos, null);
+        gridManager.RegisterTile(currentGridPos, this);
 
         UpdateVisuals();
     }
+
     void OnDestroy()
     {
         if (gridManager != null)
             gridManager.UnregisterTile(currentGridPos);
     }
-
 
     void OnMouseDown()
     {
@@ -42,15 +51,13 @@ public class DepartmentCrateSpawner : MonoBehaviour
     {
         if (usesRemaining <= 0)
         {
-            Debug.Log("Crate is empty.");
+            UnityEngine.Debug.Log("Crate is empty.");
             return;
         }
 
         Vector2Int? emptyCell = gridManager.GetRandomFreeCell();
 
-        // If the crate's cell was not registered correctly or happens to be
-        // returned, keep requesting a free cell until one is different from our
-        // current position.
+        // Avoid spawning into the crate's own cell
         int attempts = 0;
         const int maxAttempts = 50;
         while (emptyCell != null && emptyCell.Value == currentGridPos && attempts < maxAttempts)
@@ -61,14 +68,14 @@ public class DepartmentCrateSpawner : MonoBehaviour
 
         if (emptyCell == null || emptyCell.Value == currentGridPos)
         {
-            Debug.LogWarning("No free grid cell available.");
+            UnityEngine.Debug.LogWarning("No free grid cell available.");
             return;
         }
 
         DepartmentItemData itemData = GetRandomItem();
         if (itemData == null)
         {
-            Debug.LogError("Item spawn failed — itemData was null.");
+            UnityEngine.Debug.LogError("Item spawn failed — itemData was null.");
             return;
         }
 
@@ -79,8 +86,8 @@ public class DepartmentCrateSpawner : MonoBehaviour
 
         if (usesRemaining == 0)
         {
-            // Optional: Animate depletion, disable collider, prompt refill, etc.
-            Debug.Log("Crate depleted.");
+            // Animate depletion and destroy self
+            StartCoroutine(FadeAndDestroy());
         }
     }
 
@@ -89,29 +96,28 @@ public class DepartmentCrateSpawner : MonoBehaviour
         var items = crateData.possibleItems;
         if (items == null || items.Length == 0)
         {
-            Debug.LogWarning("No possibleItems assigned to CrateData.");
+            UnityEngine.Debug.LogWarning("No possibleItems assigned to CrateData.");
             return null;
         }
 
-        return items[Random.Range(0, items.Length)];
+        return items[UnityEngine.Random.Range(0, items.Length)];
     }
 
     private void SpawnTile(DepartmentItemData itemData, Vector2Int gridPos)
     {
-        GameObject prefab = Resources.Load<GameObject>("Prefabs/MergeTile");
-        if (prefab == null)
+        if (mergeTilePrefab == null)
         {
-            Debug.LogError("MergeTile prefab not found in Resources/Prefabs!");
+            UnityEngine.Debug.LogError("MergeTilePrefab reference is not assigned in Inspector!");
             return;
         }
 
         Vector3 worldPos = gridManager.GetWorldPosition(gridPos);
-        GameObject newTile = Instantiate(prefab, worldPos, Quaternion.identity, gridManager.tileParent);
+        GameObject newTile = Instantiate(mergeTilePrefab, worldPos, Quaternion.identity, gridManager.tileParent);
 
         MergeTile mergeTile = newTile.GetComponent<MergeTile>();
         mergeTile.data = itemData;
         mergeTile.ApplyVisuals();
-        mergeTile.SetCurrentGridPosition(gridPos); // Add this method if you haven’t
+        mergeTile.SetCurrentGridPosition(gridPos);
 
         gridManager.RegisterTile(gridPos, mergeTile);
     }
@@ -121,6 +127,24 @@ public class DepartmentCrateSpawner : MonoBehaviour
         if (iconImage) iconImage.sprite = crateData.icon;
         if (backgroundImage) backgroundImage.color = usesRemaining > 0 ? crateData.crateColor : Color.gray;
         if (useLabel) useLabel.text = usesRemaining.ToString();
+    }
+
+    private System.Collections.IEnumerator FadeAndDestroy()
+    {
+        float duration = 0.25f;
+        float t = 0;
+        Vector3 startScale = transform.localScale;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            float scale = Mathf.Lerp(1f, 0f, t / duration);
+            transform.localScale = startScale * scale;
+            yield return null;
+        }
+
+        gridManager.UnregisterTile(currentGridPos); // Extra safety
+        Destroy(gameObject);
     }
 
     public void RefillCrate()

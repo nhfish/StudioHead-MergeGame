@@ -241,6 +241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f96e7dfe2f8d2644d8c63451d52622ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DepartmentCrateSpawner
+  mergeTilePrefab: {fileID: 4916478899287299599, guid: e2398b03798ff4a40a4acc6ea2507f8c, type: 3}
   crateData: {fileID: 0}
   iconImage: {fileID: 0}
   backgroundImage: {fileID: 706476475581424296}

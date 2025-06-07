@@ -1,86 +1,44 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Manages grid snapping and tile registration
+/// </summary>
 public class GridManager : MonoBehaviour
 {
     [Header("Grid Settings")]
-    public int columns = 5;
-    public int rows = 7;
-    public float tileSpacing = 1.2f;
-
-    [Header("References")]
+    public int columns = 6;
+    public int rows = 9;
+    public float tileSpacing = 1.1f; // distance between tiles
+    public Vector2 startPos = Vector2.zero;
     public Transform tileParent;
-    public GameObject visualTilePrefab;
 
-    [HideInInspector] public Vector2 startPos;
-    private Dictionary<Vector2Int, MergeTile> gridDictionary;
+    // Internal dictionary
+    private Dictionary<Vector2Int, IGridOccupant> tileDictionary = new();
 
-    void Start()
+    void Awake()
     {
-        ClearGridVisuals();
-        GenerateGrid();
-        CenterCameraOnGrid();
+        tileDictionary = new Dictionary<Vector2Int, IGridOccupant>();
     }
 
-    private void ClearGridVisuals()
-    {
-        foreach (Transform child in tileParent)
-        {
-            Destroy(child.gameObject);
-        }
-    }
-
-    private void GenerateGrid()
-    {
-        gridDictionary = new Dictionary<Vector2Int, MergeTile>();
-
-        // Center the grid around world origin (0,0)
-        float gridWidth = columns * tileSpacing;
-        float gridHeight = rows * tileSpacing;
-
-        startPos = new Vector2(-gridWidth / 2f + tileSpacing / 2f, -gridHeight / 2f + tileSpacing / 2f);
-
-        for (int x = 0; x < columns; x++)
-        {
-            for (int y = 0; y < rows; y++)
-            {
-                Vector2Int coord = new Vector2Int(x, y);
-                Vector3 worldPos = GetWorldPosition(coord);
-
-                // Create visual grid tile (non-interactive)
-                Instantiate(visualTilePrefab, worldPos, Quaternion.identity, tileParent);
-            }
-        }
-    }
-
-    private void CenterCameraOnGrid()
-    {
-        float gridWidth = columns * tileSpacing;
-        float gridHeight = rows * tileSpacing;
-
-        float centerX = tileParent.position.x + startPos.x + (gridWidth - tileSpacing) / 2f;
-        float centerY = tileParent.position.y + startPos.y + (gridHeight - tileSpacing) / 2f;
-
-        Vector3 cameraPos = new Vector3(centerX, centerY, -10f);
-        Camera.main.transform.position = cameraPos;
-
-        // Zoom to fit the grid vertically
-        Camera.main.orthographicSize = (gridHeight / 2f) + 1f;
-    }
-
+    /// <summary>
+    /// Converts grid coordinates to world position
+    /// </summary>
     public Vector3 GetWorldPosition(Vector2Int gridPos)
     {
-        return tileParent.position + (Vector3)startPos + new Vector3(gridPos.x * tileSpacing, gridPos.y * tileSpacing, 0);
+        Vector3 worldPos = (Vector3)startPos + new Vector3(gridPos.x * tileSpacing, gridPos.y * tileSpacing, 0f);
+        return tileParent.position + worldPos;
     }
 
+    /// <summary>
+    /// Converts world position to nearest grid cell
+    /// </summary>
     public Vector2Int GetNearestGridCell(Vector3 worldPos)
     {
-        
-        Vector3 offset = worldPos - tileParent.position;
-        Vector2 localPos = new Vector2(offset.x, offset.y) - startPos;
-
-        int x = Mathf.RoundToInt(localPos.x / tileSpacing);
-        int y = Mathf.RoundToInt(localPos.y / tileSpacing);
+        Vector2 localPos = worldPos - (Vector3)tileParent.position;
+        int x = Mathf.RoundToInt((localPos.x - startPos.x) / tileSpacing);
+        int y = Mathf.RoundToInt((localPos.y - startPos.y) / tileSpacing);
 
         return new Vector2Int(
             Mathf.Clamp(x, 0, columns - 1),
@@ -88,45 +46,60 @@ public class GridManager : MonoBehaviour
         );
     }
 
-    public void RegisterTile(Vector2Int gridPos, MergeTile tile)
+    /// <summary>
+    /// Registers an occupant to a grid cell
+    /// </summary>
+    public void RegisterTile(Vector2Int gridPos, IGridOccupant occupant)
     {
-        gridDictionary[gridPos] = tile;
+        tileDictionary[gridPos] = occupant;
     }
 
+    /// <summary>
+    /// Unregisters a grid cell
+    /// </summary>
     public void UnregisterTile(Vector2Int gridPos)
     {
-        if (gridDictionary.ContainsKey(gridPos))
-        {
-            gridDictionary.Remove(gridPos);
-        }
+        if (tileDictionary.ContainsKey(gridPos))
+            tileDictionary.Remove(gridPos);
     }
 
-    public MergeTile GetTileAt(Vector2Int gridPos)
+    /// <summary>
+    /// Gets the occupant at a given grid cell
+    /// </summary>
+    public IGridOccupant GetTileAt(Vector2Int gridPos)
     {
-        gridDictionary.TryGetValue(gridPos, out MergeTile tile);
-        return tile;
+        tileDictionary.TryGetValue(gridPos, out IGridOccupant occupant);
+        return occupant;
     }
 
+    /// <summary>
+    /// Finds a random empty grid cell
+    /// </summary>
     public Vector2Int? GetRandomFreeCell()
-{
-    List<Vector2Int> freeCells = new List<Vector2Int>();
-
-    for (int x = 0; x < columns; x++)
     {
-        for (int y = 0; y < rows; y++)
+        List<Vector2Int> freeCells = new();
+
+        for (int x = 0; x < columns; x++)
         {
-            Vector2Int cell = new Vector2Int(x, y);
-            if (!gridDictionary.ContainsKey(cell))
+            for (int y = 0; y < rows; y++)
             {
-                freeCells.Add(cell);
+                Vector2Int pos = new Vector2Int(x, y);
+                if (!tileDictionary.ContainsKey(pos))
+                    freeCells.Add(pos);
             }
         }
+
+        if (freeCells.Count == 0)
+            return null;
+
+        return freeCells[UnityEngine.Random.Range(0, freeCells.Count)];
     }
 
-    if (freeCells.Count == 0)
-        return null;
-
-    return freeCells[Random.Range(0, freeCells.Count)];
-}
-
+    /// <summary>
+    /// Checks if a grid cell is occupied
+    /// </summary>
+    public bool IsOccupied(Vector2Int gridPos)
+    {
+        return tileDictionary.ContainsKey(gridPos);
+    }
 }

@@ -27,14 +27,31 @@ public class GridItemView : MonoBehaviour
 
     private Color GetTierColor(DepartmentItemTier tier)
     {
-        Color lowTierColor = new Color(0.8f, 0.8f, 0.8f);  // Gray for Tier 1
-        Color highTierColor = new Color(1f, 0.84f, 0f);     // Gold for Tier 10
-
-        int tierValue = (int)tier; // Should be 0-9
-
-        float t = Mathf.Clamp01(tierValue / 9f);
-
-        return Color.Lerp(lowTierColor, highTierColor, t);
+        switch (tier)
+        {
+            case DepartmentItemTier.Tier1:
+                return new Color(0.6f, 0.6f, 0.6f); // Grey
+            case DepartmentItemTier.Tier2:
+                return new Color(1f, 1f, 1f); // White
+            case DepartmentItemTier.Tier3:
+                return new Color(1f, 0.92f, 0.016f); // Yellow
+            case DepartmentItemTier.Tier4:
+                return new Color(0.2f, 0.8f, 0.2f); // Green
+            case DepartmentItemTier.Tier5:
+                return new Color(0.1f, 0.2f, 0.6f); // Dark Blue
+            case DepartmentItemTier.Tier6:
+                return new Color(0.6f, 0.2f, 0.7f); // Purple
+            case DepartmentItemTier.Tier7:
+                return new Color(1f, 0.5f, 0f); // Orange
+            case DepartmentItemTier.Tier8:
+                return new Color(0.9f, 0.1f, 0.1f); // Red
+            case DepartmentItemTier.Tier9:
+                return new Color(0.3f, 0.8f, 1f); // Light Blue
+            case DepartmentItemTier.Tier10:
+                return new Color(1f, 0.84f, 0f); // Gold
+            default:
+                return Color.white; // fallback
+        }
     }
 
     public DepartmentItemData GetData()
