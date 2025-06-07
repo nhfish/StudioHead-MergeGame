@@ -18,6 +18,7 @@ This file tracks high level design choices and rationale for **Studio Head**, a 
 - **Shop Manager** – Added a `ShopManager` and expanded the multi-currency economy for in-game purchases.
 - **Talent Inventory** – Created `TalentInventory` and collectible talent cards.
 - **Crate Shop Panel** – Added buttons to buy a department crate that spawns on the grid and deducts currency.
+- **Distribution Options** – Added placeholder buttons for Streaming, Festival, and Film Market distribution types (currently disabled).
 
 ## Next Steps
 - Implement timed tile spawning to introduce new items over time.
