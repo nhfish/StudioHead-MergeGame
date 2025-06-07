@@ -11,9 +11,6 @@ public class GridItemView : MonoBehaviour
 
     private DepartmentItemData itemData;
 
-    /// <summary>
-    /// Initializes the item view with item data.
-    /// </summary>
     public void Initialize(DepartmentItemData data)
     {
         itemData = data;
@@ -28,34 +25,16 @@ public class GridItemView : MonoBehaviour
         background.color = GetTierColor(data.tier);
     }
 
-    /// <summary>
-    /// Optional helper: sets color based on tier
-    /// </summary>
     private Color GetTierColor(DepartmentItemTier tier)
     {
+        Color lowTierColor = new Color(0.8f, 0.8f, 0.8f);  // Gray for Tier 1
+        Color highTierColor = new Color(1f, 0.84f, 0f);     // Gold for Tier 10
 
-        // Define gradient endpoints
-        Color tier1Color = new Color(0.7f, 0.7f, 0.7f);  // Gray for Tier 1
-        Color tier10Color = new Color(1f, 0.84f, 0f);     // Gold for Tier 10
+        int tierValue = (int)tier; // Should be 0-9
 
-        int tierValue = (int)tier;
+        float t = Mathf.Clamp01(tierValue / 9f);
 
-        // Support enums that might start at 1 instead of 0
-        if (tierValue >= 1 && tierValue <= 10)
-            tierValue -= 1;
-
-        // Clamp tier range to a 0-9 index
-        tierValue = Mathf.Clamp(tierValue, 0, 9);
-
-        float t = tierValue / 9f;
-        return Color.Lerp(tier1Color, tier10Color, t);
-
-        // Simple gradient from gray (Tier1) to gold (Tier10)
-        var gray = new Color(0.8f, 0.8f, 0.8f);
-        var gold = new Color(1f, 0.8f, 0.2f);
-        float t = Mathf.Clamp01((int)tier / 9f);
-        return Color.Lerp(gray, gold, t);
-
+        return Color.Lerp(lowTierColor, highTierColor, t);
     }
 
     public DepartmentItemData GetData()
