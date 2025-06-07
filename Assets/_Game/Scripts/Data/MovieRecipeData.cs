@@ -37,4 +37,7 @@ public class MovieRecipeData : ScriptableObject
     [Header("Scoring Modifiers")]
     public bool grantSynergyBonus;
     public bool allowPartialTalent;
+
+    [Header("Synergy Bonus Settings")]
+    public SynergyBonusConfig synergyBonusConfig;
 }
