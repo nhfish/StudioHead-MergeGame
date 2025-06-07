@@ -18,7 +18,7 @@ public class MovieRecipeData : ScriptableObject
         DepartmentType.Art, DepartmentType.Wardrobe, DepartmentType.Lights, DepartmentType.Crafty, DepartmentType.Locations
     };
 
-    [Header("Talent Slots (1–3 allowed)")]
+    [Header("Talent Slots (13 allowed)")]
     public TalentCard writer;
     public TalentCard director;
     public TalentCard actor;
@@ -28,6 +28,11 @@ public class MovieRecipeData : ScriptableObject
     public int baseFanReward;
     public int baseMoneyReward;
     public int productionTimeSeconds; // e.g. 480 for 8 minutes
+
+    [Header("Missing Optional Department Penalties")]
+    [Range(0f, 1f)] public float optionalDepartmentMoneyPenalty = 0f;
+    [Range(0f, 1f)] public float optionalDepartmentFanPenalty = 0f;
+    [Range(0f, 1f)] public float optionalDepartmentTimePenalty = 0f;
 
     [Header("Scoring Modifiers")]
     public bool grantSynergyBonus;

@@ -8,6 +8,9 @@ public class MovieRecipe
     public TalentCard director;
     public TalentCard actor;
 
+    public int fanReward;
+    public int moneyReward;
+
     public List<DepartmentItemData> submittedItems = new();
 
     public int TotalItemTier =>
