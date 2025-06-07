@@ -54,34 +54,54 @@ public class MergeTile : MonoBehaviour, IGridOccupant
         isDragging = false;
 
         Vector3 worldPos = transform.position;
+
+        // Always force snap no matter what
         Vector2Int targetGridPos = gridManager.GetNearestGridCell(worldPos);
         Vector3 snapPos = gridManager.GetWorldPosition(targetGridPos);
 
-        MergeTile occupyingTile = gridManager.GetTileAt(targetGridPos) as MergeTile;
+        IGridOccupant occupant = gridManager.GetTileAt(targetGridPos);
 
-        // 1. Try merging
-        if (occupyingTile != null && occupyingTile != this)
+        if (occupant is not null && !ReferenceEquals(occupant, this))
         {
-            bool merged = TryMergeWith(occupyingTile);
-            if (!merged)
+            // If the occupant is a MergeTile — attempt merge
+            MergeTile occupyingTile = occupant as MergeTile;
+
+            if (occupyingTile != null)
             {
-                // Invalid merge - revert to previous position
-                SnapToCurrentGridCell();
+                bool merged = TryMergeWith(occupyingTile);
+                if (!merged)
+                {
+                    // Revert to original position if merge failed
+                    transform.position = gridManager.GetWorldPosition(currentGridPos);
+                }
+            }
+            else
+            {
+                // Occupied by something else (e.g. Crate) cannot move into it revert
+                transform.position = gridManager.GetWorldPosition(currentGridPos);
             }
 
             return;
         }
 
-        // 2. No tile there valid move update position
-        if (occupyingTile == null)
-        {
-            gridManager.UnregisterTile(currentGridPos);
+        // If cell is empty valid move update position
+        gridManager.UnregisterTile(currentGridPos);
 
-            transform.position = snapPos;
-            currentGridPos = targetGridPos;
+        transform.position = snapPos;
+        currentGridPos = targetGridPos;
 
-            gridManager.RegisterTile(currentGridPos, this);
-        }
+        gridManager.RegisterTile(currentGridPos, this);
+    }
+
+    private Vector3 ClampToScreen(Vector3 worldPos)
+    {
+        Vector3 viewportPoint = Camera.main.WorldToViewportPoint(worldPos);
+
+        // Clamp between 0..1 in viewport space (screen edges)
+        viewportPoint.x = Mathf.Clamp(viewportPoint.x, 0.05f, 0.95f); // Add margin if desired
+        viewportPoint.y = Mathf.Clamp(viewportPoint.y, 0.05f, 0.95f);
+
+        return Camera.main.ViewportToWorldPoint(viewportPoint);
     }
 
     void Update()
@@ -93,12 +113,22 @@ public class MergeTile : MonoBehaviour, IGridOccupant
             {
                 Vector3 touchPosition = Input.GetTouch(0).position;
                 touchPosition.z = Camera.main.WorldToScreenPoint(transform.position).z;
-                transform.position = Camera.main.ScreenToWorldPoint(touchPosition);
+                Vector3 targetPos = Camera.main.ScreenToWorldPoint(touchPosition);
+
+                // Clamp position
+                targetPos = ClampToScreen(targetPos);
+
+                transform.position = targetPos;
             }
 #else
             Vector3 mousePosition = Input.mousePosition;
             mousePosition.z = Camera.main.WorldToScreenPoint(transform.position).z;
-            transform.position = Camera.main.ScreenToWorldPoint(mousePosition);
+            Vector3 targetPos = Camera.main.ScreenToWorldPoint(mousePosition);
+
+            // Clamp position
+            targetPos = ClampToScreen(targetPos);
+
+            transform.position = targetPos;
 #endif
         }
     }

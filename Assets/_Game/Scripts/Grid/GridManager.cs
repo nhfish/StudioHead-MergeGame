@@ -12,10 +12,44 @@ public class GridManager : MonoBehaviour
     public int rows = 9;
     public float tileSpacing = 1.1f; // distance between tiles
     public Vector2 startPos = Vector2.zero;
+    public GameObject visualGridTile;
     public Transform tileParent;
 
     // Internal dictionary
     private Dictionary<Vector2Int, IGridOccupant> tileDictionary = new();
+
+    void Start()
+    {
+        GenerateVisualGrid();
+
+        // Optional: center grid in the world
+        float gridWidth = (columns - 1) * tileSpacing;
+        float gridHeight = (rows - 1) * tileSpacing;
+        tileParent.position = new Vector3(-gridWidth / 2f, -gridHeight / 2f, 0f);
+        visualGridTile.transform.position = tileParent.position; // Sync the visual parent
+
+    }
+
+    private void GenerateVisualGrid()
+    {
+        // Clear existing visual tiles first
+        foreach (Transform child in tileParent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        for (int x = 0; x < columns; x++)
+        {
+            for (int y = 0; y < rows; y++)
+            {
+                Vector2Int gridPos = new Vector2Int(x, y);
+                Vector3 worldPos = GetWorldPosition(gridPos);
+
+                GameObject tileVisual = Instantiate(visualGridTile, worldPos, Quaternion.identity, tileParent);
+                tileVisual.name = $"VisualTile ({x},{y})";
+            }
+        }
+    }
 
     void Awake()
     {

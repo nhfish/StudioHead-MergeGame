@@ -1440,10 +1440,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7ad2ab9bbda2db4a839ae518095a1e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridManager
-  columns: 6
-  rows: 9
+  columns: 5
+  rows: 7
   tileSpacing: 1.05
-  startPos: {x: -4.5, y: 0}
+  startPos: {x: 0, y: 0}
+  visualGridTile: {fileID: 6093642321676593623, guid: 104248e4ed4e0e9448563c35a9b671e6, type: 3}
   tileParent: {fileID: 1321772614}
 --- !u!4 &1696535492
 Transform:
