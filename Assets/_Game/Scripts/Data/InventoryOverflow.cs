@@ -22,6 +22,14 @@ public class InventoryOverflow
         storedItems.Add(item);
     }
 
+    public bool Remove(Item item)
+    {
+        if (item == null)
+            return false;
+
+        return storedItems.Remove(item);
+    }
+
     public void ExpandSlots(int amount)
     {
         if (amount <= 0)

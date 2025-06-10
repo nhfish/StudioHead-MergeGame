@@ -48,6 +48,20 @@ public class InventoryOverflowManager : MonoBehaviour
         return false;
     }
 
+    public bool DiscardItem(Item item)
+    {
+        if (overflow.Remove(item))
+        {
+            int refund = Mathf.RoundToInt(item.baseValue * 0.1f);
+            if (EconomyManager.Instance != null && refund > 0)
+                EconomyManager.Instance.Add(CurrencyType.Money, refund);
+
+            OverflowUpdated?.Invoke();
+            return true;
+        }
+        return false;
+    }
+
     public bool PurchaseSlots(int amount)
     {
         if (amount <= 0)
