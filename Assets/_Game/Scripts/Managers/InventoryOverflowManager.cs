@@ -60,6 +60,14 @@ public class InventoryOverflowManager : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Stores an item in the overflow without returning a result.
+    /// </summary>
+    public void Store(Item item)
+    {
+        AddItem(item);
+    }
+
     public bool DiscardItem(Item item)
     {
         if (overflow.Remove(item))
