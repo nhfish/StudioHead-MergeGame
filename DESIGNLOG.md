@@ -27,6 +27,7 @@ This file tracks high level design choices and rationale for **Studio Head**, a 
 - **Genre Synergy Bonus** – Matching items grant a synergy percentage that boosts Money and Ticket rewards during distribution.
 - **CurrencyPanel integrated into HUD across top of screen.**
 - **Planned Main Menu scene with Settings overlay for initial navigation.**
+- **Continuous Map Navigation** – Implement anchors, parallax layers, and camera controls for smooth scrolling. Project currently mixes old and new input APIs.
 
 ## Next Steps
 - Finalize synergy bonus calculation and integrate with movie rewards.
