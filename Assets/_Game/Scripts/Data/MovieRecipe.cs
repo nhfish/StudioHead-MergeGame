@@ -15,6 +15,10 @@ public class MovieRecipe
 
     public List<DepartmentItemData> submittedItems = new();
 
+    public int dailiesPlayed;
+    public float rewardMultiplier = 1.0f;
+    public List<int> dailyScores = new();
+
     public int TotalItemTier =>
         submittedItems.Sum(item => (int)item.tier + 1); // Tier1 = 1 ... Tier10 = 10
 

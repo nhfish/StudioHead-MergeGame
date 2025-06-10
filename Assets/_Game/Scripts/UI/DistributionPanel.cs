@@ -46,7 +46,12 @@ public class DistributionPanel : MonoBehaviour
     private void HandleFlatPayout()
     {
         Debug.Log(" Flat payout selected!");
-        // TODO: Give immediate money/fans rewards
+        if (RewardManager.Instance != null && currentRecipe != null)
+        {
+            int money = Mathf.RoundToInt(currentRecipe.moneyReward * currentRecipe.rewardMultiplier);
+            int fans = Mathf.RoundToInt(currentRecipe.fanReward * currentRecipe.rewardMultiplier);
+            RewardManager.Instance.GrantRewards(money, fans);
+        }
         ClosePanel();
     }
 
