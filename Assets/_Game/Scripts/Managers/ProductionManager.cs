@@ -95,12 +95,6 @@ public class ProductionManager : MonoBehaviour
         Debug.Log(" Production complete!");
 
         OnProductionCompleted?.Invoke(currentRecipe);
-        if (RewardManager.Instance != null)
-        {
-            int money = Mathf.RoundToInt(currentRecipe.moneyReward * currentRecipe.rewardMultiplier);
-            int fans = Mathf.RoundToInt(currentRecipe.fanReward * currentRecipe.rewardMultiplier);
-            RewardManager.Instance.GrantRewards(money, fans);
-        }
         UnlockTalents(currentRecipe);
         // Items are not unlocked; they are consumed
     }

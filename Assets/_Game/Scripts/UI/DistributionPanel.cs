@@ -58,8 +58,42 @@ public class DistributionPanel : MonoBehaviour
     private void HandleTheatricalRelease()
     {
         Debug.Log(" Theatrical release selected!");
-        // TODO: Start long-term release, tie to RCU system
+        if (RewardManager.Instance != null && currentRecipe != null)
+        {
+            int money = Mathf.RoundToInt(currentRecipe.moneyReward * currentRecipe.rewardMultiplier);
+            int fans = Mathf.RoundToInt(currentRecipe.fanReward * currentRecipe.rewardMultiplier);
+            StartCoroutine(TheatricalPayoutRoutine(money, fans));
+        }
         ClosePanel();
+    }
+
+    private System.Collections.IEnumerator TheatricalPayoutRoutine(int totalMoney, int totalFans)
+    {
+        float duration = 5f; // simple placeholder duration
+        float elapsed = 0f;
+        int moneyPaid = 0;
+        int fansPaid = 0;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float progress = Mathf.Clamp01(elapsed / duration);
+
+            int targetMoney = Mathf.RoundToInt(totalMoney * progress);
+            int targetFans = Mathf.RoundToInt(totalFans * progress);
+
+            int deltaMoney = targetMoney - moneyPaid;
+            int deltaFans = targetFans - fansPaid;
+
+            if (deltaMoney > 0 || deltaFans > 0)
+            {
+                RewardManager.Instance.GrantRewards(deltaMoney, deltaFans);
+                moneyPaid = targetMoney;
+                fansPaid = targetFans;
+            }
+
+            yield return null;
+        }
     }
 
     private void HandleStreamingRelease()
@@ -82,17 +116,17 @@ public class DistributionPanel : MonoBehaviour
 
     public UnityAction OnDistributionComplete;
 
-public void ClosePanel()
-{
-    panelRoot.SetActive(false);
-    OnDistributionComplete?.Invoke();
-}
+    public void ClosePanel()
+    {
+        panelRoot.SetActive(false);
+        OnDistributionComplete?.Invoke();
+    }
 
-public void SetQueueCount(int count)
-{
-    // Optional: display count somewhere on screen
-    Debug.Log($" Movies remaining in queue: {count}");
-}
+    public void SetQueueCount(int count)
+    {
+        // Optional: display count somewhere on screen
+        Debug.Log($" Movies remaining in queue: {count}");
+    }
 
 
     private string GetMovieTitleFromRecipe(MovieRecipe recipe)
