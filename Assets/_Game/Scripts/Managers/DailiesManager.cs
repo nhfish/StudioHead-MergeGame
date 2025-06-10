@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DailiesManager : MonoBehaviour
 {
@@ -14,6 +16,51 @@ public class DailiesManager : MonoBehaviour
     }
 
     private readonly Dictionary<MovieRecipe, RecipeState> recipeStates = new();
+
+    /// <summary>
+    /// Returns the first recipe that has a pending dailies attempt, or null if none.
+    /// </summary>
+    public MovieRecipe GetRecipeWithPendingDaily()
+    {
+        foreach (var kvp in recipeStates)
+        {
+            if (kvp.Value.pendingAttempts > 0)
+                return kvp.Key;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Launches the dailies puzzle scene for the given recipe.
+    /// </summary>
+    public void LaunchPuzzle(MovieRecipe recipe)
+    {
+        if (recipe == null)
+            return;
+
+        StartCoroutine(LoadPuzzleRoutine(recipe));
+    }
+
+    IEnumerator LoadPuzzleRoutine(MovieRecipe recipe)
+    {
+        var load = SceneManager.LoadSceneAsync("DailiesPuzzle", LoadSceneMode.Additive);
+        yield return load;
+
+        Scene puzzleScene = SceneManager.GetSceneByName("DailiesPuzzle");
+        if (puzzleScene.IsValid())
+        {
+            foreach (var root in puzzleScene.GetRootGameObjects())
+            {
+                var board = root.GetComponentInChildren<DailiesBoardManager>();
+                if (board != null)
+                {
+                    board.dailiesManager = this;
+                    board.currentRecipe = recipe;
+                    break;
+                }
+            }
+        }
+    }
 
     public void Initialize(ProductionManager manager)
     {
