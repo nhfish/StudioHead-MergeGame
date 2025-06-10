@@ -24,6 +24,7 @@ Built with **Unity 6.2 (2023 LTS)** and supports mobile-first platforms (iOS/And
  ✅ Universal crate system that periodically spawns department crates across the grid ([UniversalCrateSystem](./Assets/_Game/Scripts/Managers/UniversalCrateSystem.cs))
  ✅ Department crate purchase & era upgrade system ([DepartmentCrateManager](./Assets/_Game/Scripts/Managers/DepartmentCrateManager.cs))
  ✅ Synergy bonuses when writer, director, and actor share the same genre ([MovieRecipe](./Assets/_Game/Scripts/Data/MovieRecipe.cs), [SynergyBonusConfig](./Assets/_Game/Scripts/Data/SynergyBonusConfig.cs))
+ ✅ Continuous map navigation with camera pans between anchors and motion blur post-processing ([ContinuousMapNavigation](./Docs/ContinuousMapNavigation.md))
 
 ---
 
