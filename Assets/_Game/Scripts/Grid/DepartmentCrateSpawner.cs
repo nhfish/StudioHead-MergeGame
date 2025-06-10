@@ -55,6 +55,13 @@ public class DepartmentCrateSpawner : MonoBehaviour, IGridOccupant
             return;
         }
 
+        DepartmentItemData itemData = GetRandomItem();
+        if (itemData == null)
+        {
+            UnityEngine.Debug.LogError("Item spawn failed — itemData was null.");
+            return;
+        }
+
         Vector2Int? emptyCell = gridManager.GetRandomFreeCell();
 
         // Avoid spawning into the crate's own cell
@@ -66,16 +73,27 @@ public class DepartmentCrateSpawner : MonoBehaviour, IGridOccupant
             attempts++;
         }
 
-        if (emptyCell == null || emptyCell.Value == currentGridPos)
+        if (emptyCell == null)
         {
-            UnityEngine.Debug.LogWarning("No free grid cell available.");
+            var mgr = InventoryOverflowManager.Instance;
+            if (mgr != null)
+                mgr.Store(new Item(itemData));
+            else
+                UnityEngine.Debug.LogWarning("No free grid cell and OverflowManager missing.");
+
+            usesRemaining--;
+            UpdateVisuals();
+
+            if (usesRemaining == 0)
+            {
+                StartCoroutine(FadeAndDestroy());
+            }
             return;
         }
 
-        DepartmentItemData itemData = GetRandomItem();
-        if (itemData == null)
+        if (emptyCell.Value == currentGridPos)
         {
-            UnityEngine.Debug.LogError("Item spawn failed — itemData was null.");
+            UnityEngine.Debug.LogWarning("No free grid cell available.");
             return;
         }
 
