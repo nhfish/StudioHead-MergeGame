@@ -19,12 +19,12 @@ This file tracks high level design choices and rationale for **Studio Head**, a 
 - **Talent Inventory** – Created `TalentInventory` and collectible talent cards.
 - **Crate Shop Panel** – Added buttons to buy a department crate that spawns on the grid and deducts currency.
 - **Distribution Options** – Added placeholder buttons for Streaming, Festival, and Film Market distribution types (currently disabled).
-- **CurrencyPanel integrated into HUD across top of screen.**
-- **Planned Main Menu scene with Settings overlay for initial navigation.**
 
 - **Inventory Overflow** – Items that exceed board capacity move to an overflow list. Players can purchase additional slots or clear space to reclaim them.
 - **Universal Crate Timer** – A single timer controls automatic crate spawns. Department type is chosen using weighted chances for varied drops.
 - **Genre Synergy Bonus** – Matching items grant a synergy percentage that boosts Money and Ticket rewards during distribution.
+- **CurrencyPanel integrated into HUD across top of screen.**
+- **Planned Main Menu scene with Settings overlay for initial navigation.**
 
 ## Next Steps
 - Finalize synergy bonus calculation and integrate with movie rewards.
