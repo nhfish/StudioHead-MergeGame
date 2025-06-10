@@ -15,7 +15,7 @@ public class DailiesBoardManager : MonoBehaviour
     public TextMeshProUGUI budgetText;
     public TextMeshProUGUI scoreText;
     public Button skipButton;
-    public Button confirmButton;
+    public DailiesResultsPanel resultsPanel;
 
     public DailiesManager dailiesManager;
     public MovieRecipe currentRecipe;
@@ -33,8 +33,6 @@ public class DailiesBoardManager : MonoBehaviour
         scoreText?.gameObject.SetActive(false);
 
         skipButton?.onClick.AddListener(SkipPuzzle);
-        confirmButton?.onClick.AddListener(ConfirmPuzzle);
-        confirmButton?.gameObject.SetActive(false);
 
         SpawnRandomTile();
         SpawnRandomTile();
@@ -172,8 +170,12 @@ public class DailiesBoardManager : MonoBehaviour
     {
         puzzleEnded = true;
         finalScore = Mathf.Max(0, remainingBudget);
-        confirmButton?.gameObject.SetActive(true);
-        if (scoreText != null)
+        float multiplier = 0f;
+        if (config != null)
+            multiplier = Mathf.Clamp01(finalScore / (float)config.baseScore);
+        if (resultsPanel != null)
+            resultsPanel.Show(finalScore, multiplier, ConfirmPuzzle);
+        else if (scoreText != null)
         {
             scoreText.gameObject.SetActive(true);
             scoreText.text = $"Score: {finalScore}";
