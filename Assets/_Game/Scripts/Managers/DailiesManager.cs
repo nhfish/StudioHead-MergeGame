@@ -51,13 +51,21 @@ public class DailiesManager : MonoBehaviour
         TryQueueRecipe(recipe, state);
     }
 
-    public void PlayOrSkipDaily(MovieRecipe recipe)
+    public void PlayOrSkipDaily(MovieRecipe recipe, int score = -1)
     {
         if (!recipeStates.TryGetValue(recipe, out var state))
             return;
 
         if (state.pendingAttempts > 0)
             state.pendingAttempts--;
+
+        recipe.dailiesPlayed++;
+
+        if (score >= 0)
+        {
+            recipe.dailyScores.Add(score);
+            recipe.rewardMultiplier += Mathf.Clamp01(score / 100f);
+        }
 
         Debug.Log($" Dailies attempt resolved. Remaining: {state.pendingAttempts}");
         TryQueueRecipe(recipe, state);
