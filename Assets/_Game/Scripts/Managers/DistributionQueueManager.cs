@@ -8,6 +8,7 @@ public class DistributionQueueManager : MonoBehaviour
 
     private Queue<MovieRecipe> recipeQueue = new();
     private bool isPanelActive = false;
+    private MovieRecipe activeRecipe;
 
     /// <summary>
     /// Adds a movie recipe to the queue.
@@ -26,11 +27,11 @@ public class DistributionQueueManager : MonoBehaviour
         if (isPanelActive || recipeQueue.Count == 0)
             return;
 
-        var nextRecipe = recipeQueue.Dequeue();
+        activeRecipe = recipeQueue.Dequeue();
         isPanelActive = true;
 
         distributionPanel.OnDistributionComplete = HandlePanelClosed;
-        distributionPanel.OpenWithRecipe(nextRecipe);
+        distributionPanel.OpenWithRecipe(activeRecipe);
         distributionPanel.SetQueueCount(recipeQueue.Count); // Optional display
     }
 
@@ -40,6 +41,11 @@ public class DistributionQueueManager : MonoBehaviour
     private void HandlePanelClosed()
     {
         isPanelActive = false;
+
+        if (activeRecipe != null && FilmArchiveManager.Instance != null)
+            FilmArchiveManager.Instance.AddRecipe(activeRecipe);
+
+        activeRecipe = null;
         TryProcessNext();
     }
 }
