@@ -20,6 +20,9 @@ Built with **Unity 6.2 (2023 LTS)** and supports mobile-first platforms (iOS/And
 ✅ Improved crate spawner that finds a free cell
 ✅ Talent inventory / card system
 ✅ Main Menu with Settings overlay
+✅ Inventory overflow slots for storing extra items off the grid, expandable via currency ([InventoryOverflowManager](./Assets/_Game/Scripts/Managers/InventoryOverflowManager.cs))
+✅ Universal crate system that periodically spawns department crates across the grid ([UniversalCrateSystem](./Assets/_Game/Scripts/Managers/UniversalCrateSystem.cs))
+✅ Synergy bonuses when writer, director, and actor share the same genre ([MovieRecipe](./Assets/_Game/Scripts/Data/MovieRecipe.cs), [SynergyBonusConfig](./Assets/_Game/Scripts/Data/SynergyBonusConfig.cs))
 
 ---
 
