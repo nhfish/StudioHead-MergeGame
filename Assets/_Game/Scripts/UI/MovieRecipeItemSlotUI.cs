@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class MovieRecipeItemSlotUI : MonoBehaviour
+public class MovieRecipeItemSlotUI : MonoBehaviour, IDropHandler, IPointerClickHandler
 {
     public Image iconImage;
 
@@ -20,6 +21,42 @@ public class MovieRecipeItemSlotUI : MonoBehaviour
         AssignedItem = item;
         if (iconImage != null)
             iconImage.sprite = item != null ? item.icon : DepartmentItemLibraryInstance.GetIcon(Department);
+    }
+
+    public void OnDrop(PointerEventData eventData)
+    {
+        if (eventData.pointerDrag == null)
+            return;
+
+        var dragUI = eventData.pointerDrag.GetComponent<DepartmentItemDragUI>();
+        if (dragUI == null)
+            return;
+
+        SetItem(dragUI.ItemData);
+        dragUI.Consume();
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button != PointerEventData.InputButton.Right)
+            return;
+
+        ReturnItemToInventory();
+    }
+
+    /// <summary>
+    /// Returns the assigned item back to the overflow inventory and clears the slot.
+    /// </summary>
+    public void ReturnItemToInventory()
+    {
+        if (AssignedItem == null)
+            return;
+
+        var mgr = InventoryOverflowManager.Instance;
+        if (mgr != null)
+            mgr.Store(new Item(AssignedItem));
+
+        ClearItem();
     }
 
     public void ClearItem()
