@@ -19,6 +19,8 @@ This file tracks high level design choices and rationale for **Studio Head**, a 
 - **Talent Inventory** – Created `TalentInventory` and collectible talent cards.
 - **Crate Shop Panel** – Added buttons to buy a department crate that spawns on the grid and deducts currency.
 - **Distribution Options** – Added placeholder buttons for Streaming, Festival, and Film Market distribution types (currently disabled).
+- **CurrencyPanel integrated into HUD across top of screen.**
+- **Planned Main Menu scene with Settings overlay for initial navigation.**
 
 ## Next Steps
 - Implement timed tile spawning to introduce new items over time.
