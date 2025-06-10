@@ -71,15 +71,7 @@ public class DepartmentCrateManager : MonoBehaviour
     DepartmentItemData GetRandomItem(Department dept)
     {
         DepartmentItemTier tier = GetWeightedTier(dept.dropWeights);
-        var allItems = Resources.LoadAll<DepartmentItemData>("DepartmentItems");
-        List<DepartmentItemData> matches = new();
-        foreach (var data in allItems)
-        {
-            if (data.department == dept.type && data.tier == tier)
-                matches.Add(data);
-        }
-        if (matches.Count == 0) return null;
-        return matches[Random.Range(0, matches.Count)];
+        return DepartmentItemFactory.Create(dept.type, tier);
     }
 
     DepartmentItemTier GetWeightedTier(List<Department.TierWeight> weights)
