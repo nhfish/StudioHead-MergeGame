@@ -116,7 +116,11 @@ public class MovieRecipePanel : MonoBehaviour
             img.sprite = card != null ? card.baseData.portrait : null;
     }
 
-    private void SubmitRecipe()
+    /// <summary>
+    /// Build a <see cref="MovieRecipe"/> from the current UI state.
+    /// </summary>
+    /// <returns>Fully populated recipe object.</returns>
+    public MovieRecipe BuildRecipe()
     {
         MovieRecipe recipe = new MovieRecipe
         {
@@ -132,6 +136,12 @@ public class MovieRecipePanel : MonoBehaviour
                 recipe.submittedItems.Add(slot.AssignedItem);
         }
 
+        return recipe;
+    }
+
+    private void SubmitRecipe()
+    {
+        var recipe = BuildRecipe();
         OnRecipeSubmitted?.Invoke(recipe);
         Close();
     }
