@@ -32,6 +32,12 @@ public class ProductionManager : MonoBehaviour
             return;
         }
 
+        if (!recipeData.allowPartialTalent && recipe.TalentCount < 3)
+        {
+            Debug.LogWarning("All talent slots must be filled to start production.");
+            return;
+        }
+
         currentRecipe = recipe;
         isProducing = true;
 
