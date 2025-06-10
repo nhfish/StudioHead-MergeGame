@@ -14,6 +14,8 @@ public class InventoryOverflowManager : MonoBehaviour
 
     private InventoryOverflow overflow;
 
+    public System.Action OverflowUpdated;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -33,12 +35,14 @@ public class InventoryOverflowManager : MonoBehaviour
 
     public int SlotsUsed => overflow.storedItems.Count;
     public int MaxSlots => overflow.currentSlots;
+    public IReadOnlyList<Item> StoredItems => overflow.storedItems;
 
     public bool AddItem(Item item)
     {
         if (overflow.CanStore(item))
         {
             overflow.Store(item);
+            OverflowUpdated?.Invoke();
             return true;
         }
         return false;
@@ -54,6 +58,7 @@ public class InventoryOverflowManager : MonoBehaviour
             return false;
 
         overflow.ExpandSlots(amount);
+        OverflowUpdated?.Invoke();
         return true;
     }
 
