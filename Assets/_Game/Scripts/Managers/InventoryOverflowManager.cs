@@ -14,6 +14,8 @@ public class InventoryOverflowManager : MonoBehaviour
     private InventoryOverflow overflow;
 
     public System.Action OverflowUpdated;
+    public System.Action<int> SlotsWarning;
+    public System.Action<int> ItemDiscarded;
 
     void Awake()
     {
@@ -42,8 +44,19 @@ public class InventoryOverflowManager : MonoBehaviour
         {
             overflow.Store(item);
             OverflowUpdated?.Invoke();
+
+            int remaining = overflow.currentSlots - overflow.storedItems.Count;
+            if (remaining < 3)
+                SlotsWarning?.Invoke(remaining);
+
             return true;
         }
+
+        int refund = Mathf.RoundToInt(item.baseValue * 0.1f);
+        if (EconomyManager.Instance != null && refund > 0)
+            EconomyManager.Instance.Add(CurrencyType.Money, refund);
+
+        ItemDiscarded?.Invoke(refund);
         return false;
     }
 
