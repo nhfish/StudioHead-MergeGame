@@ -101,9 +101,8 @@ StudioHead-MergeGame/
 
 1. Clone this repo
 2. Open in Unity 6.2 or later
-3. Open `Scenes/MainMenu.unity`
-4. Hit Play and test drag + merge functionality.
-   The CurrencyPanel now appears across the top of the screen.
+3. Open `Scenes/MainMenu.unity` as your starting scene
+4. Hit Play to test drag + merge functionality. The CurrencyPanel now appears across the top of the screen.
 5. To add new items:
    - Create new `MergeItemData` ScriptableObject
    - Assign sprite, tier, and evolution
