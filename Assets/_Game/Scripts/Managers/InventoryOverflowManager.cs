@@ -1,0 +1,70 @@
+using UnityEngine;
+
+public class InventoryOverflowManager : MonoBehaviour
+{
+    public static InventoryOverflowManager Instance { get; private set; }
+
+    [Header("Overflow Config")]
+    public int startingSlots = 5;
+    public int maxSlots = 20;
+
+    [Header("Slot Expansion")]
+    public int baseExpandCost = 100;
+    public float costMultiplier = 1.2f;
+
+    private InventoryOverflow overflow;
+
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        overflow = new InventoryOverflow
+        {
+            currentSlots = startingSlots,
+            maxSlots = maxSlots
+        };
+    }
+
+    public int SlotsUsed => overflow.storedItems.Count;
+    public int MaxSlots => overflow.currentSlots;
+
+    public bool AddItem(Item item)
+    {
+        if (overflow.CanStore(item))
+        {
+            overflow.Store(item);
+            return true;
+        }
+        return false;
+    }
+
+    public bool PurchaseSlots(int amount)
+    {
+        if (amount <= 0)
+            return false;
+
+        int cost = CalculateCost(amount);
+        if (EconomyManager.Instance != null && !EconomyManager.Instance.Spend(CurrencyType.Money, cost))
+            return false;
+
+        overflow.ExpandSlots(amount);
+        return true;
+    }
+
+    private int CalculateCost(int amount)
+    {
+        int cost = 0;
+        for (int i = 0; i < amount; i++)
+        {
+            int level = overflow.currentSlots + i - startingSlots;
+            cost += Mathf.RoundToInt(baseExpandCost * Mathf.Pow(costMultiplier, level));
+        }
+        return cost;
+    }
+}
