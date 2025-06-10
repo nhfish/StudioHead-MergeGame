@@ -19,6 +19,7 @@ Built with **Unity 6.2 (2023 LTS)** and supports mobile-first platforms (iOS/And
 ✅ Production and distribution pipeline ([ProductionManager](./Assets/_Game/Scripts/Managers/ProductionManager.cs) / [DistributionQueueManager](./Assets/_Game/Scripts/Managers/DistributionQueueManager.cs))
 ✅ Improved crate spawner that finds a free cell
 ✅ Talent inventory / card system
+✅ Main Menu with Settings overlay
 
 ---
 
@@ -97,8 +98,9 @@ StudioHead-MergeGame/
 
 1. Clone this repo
 2. Open in Unity 6.2 or later
-3. Open `Scenes/GameMain.unity`
-4. Hit Play and test drag + merge functionality
+3. Open `Scenes/MainMenu.unity`
+4. Hit Play and test drag + merge functionality.
+   The CurrencyPanel now appears across the top of the screen.
 5. To add new items:
    - Create new `MergeItemData` ScriptableObject
    - Assign sprite, tier, and evolution
