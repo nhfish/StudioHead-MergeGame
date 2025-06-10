@@ -6,6 +6,7 @@ public class Item
     public string departmentName;
     public int tier;
     public Sprite visual;
+    public int baseValue;
 
     public Item() { }
 
@@ -20,5 +21,6 @@ public class Item
         departmentName = data.department.ToString();
         tier = (int)data.tier;
         visual = data.icon;
+        baseValue = data.baseValue;
     }
 }

@@ -19,6 +19,9 @@ public class DepartmentItemData : ScriptableObject
     [Range(0f, 2f)]
     public float rewardMultiplier = 1f;
 
+    [Header("Economy")]
+    public int baseValue = 0;
+
     public bool IsRequired =>
         department == DepartmentType.Camera ||
         department == DepartmentType.Sound ||
