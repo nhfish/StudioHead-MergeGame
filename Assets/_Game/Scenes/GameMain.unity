@@ -274,7 +274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23b5a6b188d0d8147b72f84b7705f7a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DistributionQueueManager
-  distributionPanel: {fileID: 0}
+  distributionPanel: {fileID: 3179001271470807946, guid: c4cd7b021cce13b42a26e9216efebb85, type: 3}
 --- !u!4 &170627267
 Transform:
   m_ObjectHideFlags: 0
@@ -2037,6 +2037,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &2500000100
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1139244700}
+    m_Modifications:
+    - target: {fileID: 1529061668676718407, guid: c4cd7b021cce13b42a26e9216efebb85, type: 3}
+      propertyPath: m_Name
+      value: DistributionPanel
+      objectReference: {fileID: 0}
+  m_RemovedComponents: []
+  m_RemovedGameObjects: []
+  m_AddedGameObjects: []
+  m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c4cd7b021cce13b42a26e9216efebb85, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -2053,6 +2070,7 @@ SceneRoots:
   - {fileID: 1274781634}
   - {fileID: 2034011438}
   - {fileID: 1672727551}
+  - {fileID: 2500000100}
   - {fileID: 1669451041}
   - {fileID: 2500000010}
   - {fileID: 2500000050}
