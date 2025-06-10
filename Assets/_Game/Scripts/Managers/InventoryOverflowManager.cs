@@ -5,12 +5,11 @@ public class InventoryOverflowManager : MonoBehaviour
     public static InventoryOverflowManager Instance { get; private set; }
 
     [Header("Overflow Config")]
-    public int startingSlots = 5;
-    public int maxSlots = 20;
+    public int startingSlots = 4;
+    public int maxSlots = 12;
 
     [Header("Slot Expansion")]
     public int baseExpandCost = 100;
-    public float costMultiplier = 1.2f;
 
     private InventoryOverflow overflow;
 
@@ -62,16 +61,22 @@ public class InventoryOverflowManager : MonoBehaviour
         return false;
     }
 
-    public bool PurchaseSlots(int amount)
+    public bool TryPurchaseSlots(int amount)
     {
         if (amount <= 0)
             return false;
 
-        int cost = CalculateCost(amount);
-        if (EconomyManager.Instance != null && !EconomyManager.Instance.Spend(CurrencyType.Money, cost))
+        int available = overflow.maxSlots - overflow.currentSlots;
+        if (available <= 0)
             return false;
 
-        overflow.ExpandSlots(amount);
+        int toBuy = Mathf.Min(amount, available);
+        int cost = CalculateCost(toBuy);
+
+        if (EconomyManager.Instance == null || !EconomyManager.Instance.Spend(CurrencyType.Money, cost))
+            return false;
+
+        overflow.ExpandSlots(toBuy);
         OverflowUpdated?.Invoke();
         return true;
     }
@@ -82,7 +87,7 @@ public class InventoryOverflowManager : MonoBehaviour
         for (int i = 0; i < amount; i++)
         {
             int level = overflow.currentSlots + i - startingSlots;
-            cost += Mathf.RoundToInt(baseExpandCost * Mathf.Pow(costMultiplier, level));
+            cost += Mathf.RoundToInt(baseExpandCost * Mathf.Pow(2f, level));
         }
         return cost;
     }
