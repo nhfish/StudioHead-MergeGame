@@ -58,12 +58,17 @@ public class ProductionManager : MonoBehaviour
         recipe.moneyReward = Mathf.RoundToInt(recipeData.baseMoneyReward * (1f - recipeData.optionalDepartmentMoneyPenalty * missingOptional));
         recipe.fanReward = Mathf.RoundToInt(recipeData.baseFanReward * (1f - recipeData.optionalDepartmentFanPenalty * missingOptional));
 
-        if (recipeData.grantSynergyBonus && recipe.HasGenreSynergy() && recipeData.synergyBonusConfig != null)
+        if (recipeData.grantSynergyBonus && recipe.HasGenreSynergy())
         {
-            int highestTier = GetHighestTier(recipe);
-            float bonus = recipeData.synergyBonusConfig.GetBonusForTier(highestTier);
-            recipe.moneyReward = Mathf.RoundToInt(recipe.moneyReward * (1f + bonus));
-            recipe.fanReward = Mathf.RoundToInt(recipe.fanReward * (1f + bonus));
+            FranchiseManager.Instance?.RegisterMovie(recipeData.movieTitle);
+
+            if (recipeData.synergyBonusConfig != null)
+            {
+                int highestTier = GetHighestTier(recipe);
+                float bonus = recipeData.synergyBonusConfig.GetBonusForTier(highestTier);
+                recipe.moneyReward = Mathf.RoundToInt(recipe.moneyReward * (1f + bonus));
+                recipe.fanReward = Mathf.RoundToInt(recipe.fanReward * (1f + bonus));
+            }
         }
 
         LockResources(recipe);
