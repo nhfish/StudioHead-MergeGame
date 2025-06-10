@@ -21,8 +21,9 @@ Built with **Unity 6.2 (2023 LTS)** and supports mobile-first platforms (iOS/And
 ✅ Talent inventory / card system
 ✅ Main Menu with Settings overlay
 ✅ Inventory overflow slots for storing extra items off the grid, expandable via currency ([InventoryOverflowManager](./Assets/_Game/Scripts/Managers/InventoryOverflowManager.cs))
-✅ Universal crate system that periodically spawns department crates across the grid ([UniversalCrateSystem](./Assets/_Game/Scripts/Managers/UniversalCrateSystem.cs))
-✅ Synergy bonuses when writer, director, and actor share the same genre ([MovieRecipe](./Assets/_Game/Scripts/Data/MovieRecipe.cs), [SynergyBonusConfig](./Assets/_Game/Scripts/Data/SynergyBonusConfig.cs))
+ ✅ Universal crate system that periodically spawns department crates across the grid ([UniversalCrateSystem](./Assets/_Game/Scripts/Managers/UniversalCrateSystem.cs))
+ ✅ Department crate purchase & era upgrade system ([DepartmentCrateManager](./Assets/_Game/Scripts/Managers/DepartmentCrateManager.cs))
+ ✅ Synergy bonuses when writer, director, and actor share the same genre ([MovieRecipe](./Assets/_Game/Scripts/Data/MovieRecipe.cs), [SynergyBonusConfig](./Assets/_Game/Scripts/Data/SynergyBonusConfig.cs))
 
 ---
 
@@ -84,6 +85,7 @@ StudioHead-MergeGame/
 | Talent/crew management | 🔜 Next |
 | Save/load system | 🔜 Planned |
 | Full merge trees x4 departments | 🔜 Planned |
+| Player marketplace & social leaderboards | 📝 Ideation |
 
 ---
 
@@ -158,3 +160,9 @@ Latest merge: fixed bug where crate spawner placed crates on occupied cells. It 
 
 ## Department Crate Shop
 Added `CrateShopPanel` with purchase buttons for each department. Buying a crate spends money and spawns a matching crate if space allows.
+
+## Overflow Inventory Panel
+`InventoryOverflowManager` persists across scenes and the slide-up `OverflowPanel` lets players reclaim or discard items when the grid is full.
+
+## Department Crate Upgrades
+`DepartmentCrateManager` handles era upgrades, scaling crate costs and drop tiers for each department.

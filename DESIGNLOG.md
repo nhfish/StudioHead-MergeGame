@@ -22,13 +22,15 @@ This file tracks high level design choices and rationale for **Studio Head**, a 
 
 - **Inventory Overflow** – Items that exceed board capacity move to an overflow list. Players can purchase additional slots or clear space to reclaim them.
 - **Universal Crate Timer** – A single timer controls automatic crate spawns. Department type is chosen using weighted chances for varied drops.
+- **Department Crate Purchase & Upgrade** – `DepartmentCrateManager` spawns crates using weighted item tiers and scales costs as departments advance.
+- **OverflowPanel UI** – Expandable panel shows overflow items and warns the player when space runs low.
 - **Genre Synergy Bonus** – Matching items grant a synergy percentage that boosts Money and Ticket rewards during distribution.
 - **CurrencyPanel integrated into HUD across top of screen.**
 - **Planned Main Menu scene with Settings overlay for initial navigation.**
 
 ## Next Steps
 - Finalize synergy bonus calculation and integrate with movie rewards.
-- Build overflow inventory UI and slot purchasing prompts.
 - Implement timed tile spawning to introduce new items over time.
 - Prototype the movie recipe system to combine merged items into short film projects.
+- Explore social leaderboards and a player marketplace for trading high-tier items.
 
