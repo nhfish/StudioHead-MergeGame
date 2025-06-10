@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
@@ -6,10 +7,16 @@ using UnityEngine.Events;
 public class ProductionManager : MonoBehaviour
 {
     public UnityEvent<MovieRecipe> OnProductionCompleted;
+    public UnityEvent<float, MovieRecipe> OnDailiesAvailable;
+    public UnityEvent<float> OnProductionProgress;
 
     private MovieRecipe currentRecipe;
     private float remainingTime;
     private bool isProducing = false;
+
+    private float totalTime;
+    private float elapsedTime;
+    private Queue<float> progressMilestones = new Queue<float>();
 
     public void StartProduction(MovieRecipe recipe, MovieRecipeData recipeData, float productionDuration)
     {
@@ -38,6 +45,9 @@ public class ProductionManager : MonoBehaviour
 
         float adjustedDuration = productionDuration + (productionDuration * recipeData.optionalDepartmentTimePenalty * missingOptional);
         remainingTime = adjustedDuration;
+        totalTime = adjustedDuration;
+        elapsedTime = 0f;
+        progressMilestones = new Queue<float>(new float[] { 0.33f, 0.66f, 1f });
 
         recipe.moneyReward = Mathf.RoundToInt(recipeData.baseMoneyReward * (1f - recipeData.optionalDepartmentMoneyPenalty * missingOptional));
         recipe.fanReward = Mathf.RoundToInt(recipeData.baseFanReward * (1f - recipeData.optionalDepartmentFanPenalty * missingOptional));
@@ -61,6 +71,17 @@ public class ProductionManager : MonoBehaviour
         while (remainingTime > 0f)
         {
             remainingTime -= Time.deltaTime;
+            elapsedTime += Time.deltaTime;
+
+            float progress = totalTime > 0f ? Mathf.Clamp01(elapsedTime / totalTime) : 0f;
+            OnProductionProgress?.Invoke(progress);
+
+            if (progressMilestones.Count > 0 && progress >= progressMilestones.Peek())
+            {
+                float milestone = progressMilestones.Dequeue();
+                OnDailiesAvailable?.Invoke(milestone, currentRecipe);
+            }
+
             yield return null;
         }
 
