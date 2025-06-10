@@ -13,6 +13,10 @@ public class OverflowPanel : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     public GameObject itemTilePrefab;
     public TextMeshProUGUI slotLabel;
 
+    [Header("Feedback")] 
+    public TextMeshProUGUI warningText;
+    public TextMeshProUGUI refundText;
+
     [Header("Slide Settings")]
     public float collapsedY = -300f;
     public float expandedY = 0f;
@@ -35,14 +39,27 @@ public class OverflowPanel : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
         RefreshUI();
 
+        if (warningText != null)
+            warningText.text = string.Empty;
+        if (refundText != null)
+            refundText.text = string.Empty;
+
         if (InventoryOverflowManager.Instance != null)
+        {
             InventoryOverflowManager.Instance.OverflowUpdated += OnOverflowChanged;
+            InventoryOverflowManager.Instance.SlotsWarning += OnSlotsWarning;
+            InventoryOverflowManager.Instance.ItemDiscarded += OnItemDiscarded;
+        }
     }
 
     private void OnDestroy()
     {
         if (InventoryOverflowManager.Instance != null)
+        {
             InventoryOverflowManager.Instance.OverflowUpdated -= OnOverflowChanged;
+            InventoryOverflowManager.Instance.SlotsWarning -= OnSlotsWarning;
+            InventoryOverflowManager.Instance.ItemDiscarded -= OnItemDiscarded;
+        }
     }
 
     private void Update()
@@ -89,6 +106,18 @@ public class OverflowPanel : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     private void OnOverflowChanged()
     {
         RefreshUI();
+    }
+
+    private void OnSlotsWarning(int remaining)
+    {
+        if (warningText != null)
+            warningText.text = $"Only {remaining} overflow slots remaining!";
+    }
+
+    private void OnItemDiscarded(int refund)
+    {
+        if (refundText != null)
+            refundText.text = $"Overflow full! Discarded item for {refund}";
     }
 
     private void RefreshUI()
