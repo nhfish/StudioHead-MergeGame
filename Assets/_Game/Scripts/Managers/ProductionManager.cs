@@ -39,6 +39,15 @@ public class ProductionManager : MonoBehaviour
         }
 
         currentRecipe = recipe;
+
+        // base multiplier from submitted department items
+        float itemMultiplier = 1f;
+        if (recipe.submittedItems != null)
+        {
+            foreach (var item in recipe.submittedItems)
+                itemMultiplier *= item.rewardMultiplier;
+        }
+        recipe.rewardMultiplier = itemMultiplier;
         isProducing = true;
 
         int missingOptional = 0;
