@@ -29,9 +29,14 @@ This file tracks high level design choices and rationale for **Studio Head**, a 
 - **Planned Main Menu scene with Settings overlay for initial navigation.**
 - **Continuous Map Navigation** – Implement anchors, parallax layers, and camera controls for smooth scrolling. Project currently mixes old and new input APIs.
 
+- **Save/Load System** – Implemented comprehensive save system with binary format, auto-save on scene transitions/app pause, 45-minute auto-backup, and save indicator UI. Includes placeholder FameManager for future expansion.
+- **Fame System Foundation** – Created `FameManager` with level progression and events. Ready for integration with production/distribution rewards.
+
 ## Next Steps
-- Finalize synergy bonus calculation and integrate with movie rewards.
-- Implement timed tile spawning to introduce new items over time.
-- Prototype the movie recipe system to combine merged items into short film projects.
-- Explore social leaderboards and a player marketplace for trading high-tier items.
+- Expand Fame system integration with production rewards and UI display
+- Implement timed tile spawning to introduce new items over time
+- Prototype the movie recipe system to combine merged items into short film projects
+- Explore social leaderboards and a player marketplace for trading high-tier items
+- Implement continuous map navigation system (currently documented but not implemented)
+- Add cloud save synchronization for cross-device play
 

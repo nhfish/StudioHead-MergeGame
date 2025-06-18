@@ -8,8 +8,8 @@ using UnityEngine;
 public class GridManager : MonoBehaviour
 {
     [Header("Grid Settings")]
-    public int columns = 6;
-    public int rows = 9;
+    public int columns = 9;
+    public int rows = 16;
     public float tileSpacing = 1.1f; // distance between tiles
     public Vector2 startPos = Vector2.zero;
     public GameObject visualGridTile;

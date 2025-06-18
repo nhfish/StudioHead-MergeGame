@@ -63,7 +63,7 @@ public class MergeTile : MonoBehaviour, IGridOccupant
 
         if (occupant is not null && !ReferenceEquals(occupant, this))
         {
-            // If the occupant is a MergeTile — attempt merge
+            // If the occupant is a MergeTile ï¿½ attempt merge
             MergeTile occupyingTile = occupant as MergeTile;
 
             if (occupyingTile != null)
@@ -151,7 +151,7 @@ public class MergeTile : MonoBehaviour, IGridOccupant
 
         if (!data.IsMergeableWith(other.data))
         {
-            UnityEngine.Debug.Log("Merge failed — not compatible");
+            UnityEngine.Debug.Log("Merge failed ï¿½ not compatible");
             return false;
         }
 
@@ -220,4 +220,7 @@ public class MergeTile : MonoBehaviour, IGridOccupant
     {
         currentGridPos = newPos;
     }
+
+    // Public property to get current grid position for save system
+    public Vector2Int CurrentGridPosition => currentGridPos;
 }
